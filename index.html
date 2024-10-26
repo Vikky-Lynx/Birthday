@@ -214,17 +214,19 @@
 </head>
 
 <body>
+    <audio id="birthday-audio" src="./assets/happyBday.wav" preload="auto"></audio>
+    <audio id="applause-audio" src="./assets/applause.wav" preload="auto"></audio>
     <div class="gift-box" id="gift-box">
         <img src="./assets/gift.webp" alt="gift" style="width: 100%; height: auto; border-radius: 10px;">
         <div class="text">Click Me</div>
     </div>
 
     <div class="cake-container" id="cake-container">
-        <div class="message" id="message">HAPPY BIRTHDAY LARRY!!!</div>
+        <div class="message" id="message">HAPPY BIRTHDAY <br> LARRY!!!</div>
         <img src="./assets/cake.webp" alt="cake" class="cake">
         <img src="./assets/candle.webp" alt="candle" class="candle" id="candle"> <!-- Изображение свечи -->
         <div class="flame" id="flame"></div> <!-- Огонёк с изображением -->
-        <div class="blow-message">Acces to the microphone,<br> make a wish and...<br> blow on me out louder ;)</div>
+        <div class="blow-message">Allow to the microphone,<br> make a wish and...<br> blow into the speaker ;)</div>
     </div>
 
     <img src="./assets/Bday.jpg" alt="Birthday Celebration" id="birthday-image" class="hidden"
@@ -252,9 +254,11 @@
             'assets/11.webp',
         ];
 
+        const birthdayAudio = document.getElementById('birthday-audio');
         giftBox.addEventListener('click', () => {
             giftBox.classList.add('hidden');
             cakeContainer.style.display = 'flex';
+            birthdayAudio.play(); // Воспроизводим музыку
             openMic();
             createBalloons();
             animateMessage();
@@ -270,12 +274,16 @@
                     analyser.fftSize = 2048;
                     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
+                    const applauseAudio = document.getElementById('applause-audio');
                     function detectBlow() {
                         analyser.getByteFrequencyData(dataArray);
                         const soundLevel = dataArray.reduce((a, b) => a + b) / dataArray.length;
                         if (soundLevel > 50) {
                             candle.style.opacity = '0';
                             flame.style.display = 'none';
+                            birthdayAudio.pause(); // Останавливаем музыку
+                            birthdayAudio.currentTime = 0; // Сбрасываем время воспроизведения
+                            applauseAudio.play(); // Воспроизводим музыку аплодисментов
                             setTimeout(() => {
                                 candle.style.display = 'none';
                                 cakeContainer.classList.add('blur');
@@ -327,7 +335,7 @@
 
         function showBirthdayMessage() {
             const birthdayMessage = document.getElementById('birthday-message');
-            birthdayMessage.innerHTML = "There is a whole world of possibilities open before you,<br> so may success smile upon you in all your endeavors<br> and may your dreams come true.<br> Be happy. Happy Birthday!";
+            birthdayMessage.innerHTML = "There is a whole world of possibilities open before you,<br> so may success smile upon you in all your endeavors and may your dreams come true.<br> Be happy. Happy Birthday!";
             birthdayMessage.style.opacity = 1; // Убедитесь, что текст полностью виден
         }
 
